@@ -1,6 +1,5 @@
 package com.codingdojo.stackmanagement.controllers;
 
-
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,4 +63,5 @@ public class MainController {
 	        return "redirect:/dashboard"; // refresh page, form hidden
 	    }
 	}
+
 }
