@@ -1,13 +1,10 @@
-package com.choreTracker.controllers;
+package com.codingdojo.stockmanagement.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import com.choreTracker.models.LoginUser;
 import com.choreTracker.models.User;
@@ -21,78 +18,90 @@ import jakarta.validation.Valid;
 @RequestMapping("/")
 public class MainController {
 
-	// Add once service is implemented:
-	@Autowired
-	private UserService userServ;
-	@Autowired
-	private JobService jobService;
+    @Autowired
+    private UserService userServ;
 
-	@GetMapping("/")
-	public String index(Model model) {
+    @Autowired
+    private JobService jobService;
 
-		// Bind empty User and LoginUser objects to the JSP
-		// to capture the form input :
-		model.addAttribute("newUser", new User());
-		model.addAttribute("newLogin", new LoginUser());
+    // === Show login/register page ===
+    @GetMapping("/")
+    public String index(Model model) {
+        model.addAttribute("newUser", new User());
+        model.addAttribute("newLogin", new LoginUser());
+        return "index.jsp";
+    }
 
-		return "index.jsp";
-	}
+    // === Register new user ===
+    @PostMapping("/register")
+    public String register(@Valid @ModelAttribute("newUser") User newUser,
+                           BindingResult result,
+                           Model model,
+                           HttpSession session) {
 
-	// Register Route
-	@PostMapping("/register")
-	public String register(@Valid @ModelAttribute("newUser") User newUser, BindingResult result, Model model,
-			HttpSession session) {
+        userServ.register(newUser, result);
 
-		// call a register method in the service
-		// to do some extra validations and create a new user!
-		userServ.register(newUser, result);
+        if (result.hasErrors()) {
+            model.addAttribute("newLogin", new LoginUser());
+            return "index.jsp";
+        }
 
-		if (result.hasErrors()) {
-			// Be sure to send in the empty LoginUser before
-			// re-rendering the page.
-			model.addAttribute("newLogin", new LoginUser());
-			return "index.jsp";
-		}
+        session.setAttribute("userId", newUser.getId());
+        return "redirect:/dashboard";
+    }
 
-		// No errors! :
-		// Store their ID from the DB in session,
-		// in other words, log them in.
-		session.setAttribute("userId", newUser.getId());
+    // === Login existing user ===
+    @PostMapping("/login")
+    public String login(@Valid @ModelAttribute("newLogin") LoginUser newLogin,
+                        BindingResult result,
+                        Model model,
+                        HttpSession session) {
 
-		return "redirect:/dashboard";
-	}
+        User user = userServ.login(newLogin, result);
 
-	// Login Route
-	@PostMapping("/login")
-	public String login(@Valid @ModelAttribute("newLogin") LoginUser newLogin, BindingResult result, Model model,
-			HttpSession session) {
+        if (result.hasErrors()) {
+            model.addAttribute("newUser", new User());
+            return "index.jsp";
+        }
 
-		// Add once service is implemented:
-		User user = userServ.login(newLogin, result);
+        session.setAttribute("userId", user.getId());
+        return "redirect:/dashboard";
+    }
 
-		if (result.hasErrors()) {
-			model.addAttribute("newUser", new User());
-			return "index.jsp";
-		}
+    // === Logout user ===
+    @GetMapping("/logout")
+    public String logout(HttpSession session) {
+        session.setAttribute("userId", null);
+        return "redirect:/";
+    }
 
-		// in other words, log them in.
-		session.setAttribute("userId", user.getId());
-
-		return "redirect:/dashboard";
-	}
-
-	// Logout Route
-	@GetMapping("/logout")
-	public String logout(HttpSession session) {
-		session.setAttribute("userId", null);
-		return "redirect:/";
-	}
-
+    // === Dashboard page ===
     @GetMapping("/dashboard")
     public String home(Model model, HttpSession session) {
-    	
-    	if(session.getAttribute("userId") == null) {
-    		return "redirect:/";
+        if (session.getAttribute("userId") == null) {
+            return "redirect:/";
+        }
 
+        Long userId = (Long) session.getAttribute("userId");
+        User user = userServ.findById(userId);
+        model.addAttribute("user", user);
+        return "dashboard.jsp";
+    }
 
+    // === Update Budget ===
+    @PostMapping("/update-budget")
+    public String updateBudget(@RequestParam("budget") Double newBudget, HttpSession session) {
+        Long userId = (Long) session.getAttribute("userId");
+        if (userId == null) {
+            return "redirect:/";
+        }
+
+        User user = userServ.findById(userId);
+        if (user != null) {
+            user.setBudget(newBudget);
+            userServ.save(user);
+        }
+
+        return "redirect:/dashboard";
+    }
 }
