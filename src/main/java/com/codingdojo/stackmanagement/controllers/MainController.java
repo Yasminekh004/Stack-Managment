@@ -105,9 +105,9 @@ public class MainController {
 		Page<Item> items;
 	    
 	    if (category != null && !category.isEmpty()) {
-	    	items = itemService.getPagedItemsbyCategory(page, size, category);
+	    	items = itemService.getPagedItemsbyCategory(page, size, category, user);
 	    } else {
-	    	items = itemService.getPagedItems(page, size, keyword); // fallback to all items
+	    	items = itemService.getPagedItems(page, size, keyword, user);
 	    }
 	    
 	    model.addAttribute("items", items.getContent());
@@ -124,11 +124,13 @@ public class MainController {
 	}
 	
 	@PostMapping("/item/new")
-	public String create(@Valid @ModelAttribute("item") Item item, BindingResult result, Model model, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "4") int size,
+	public String create(@Valid @ModelAttribute("item") Item item, HttpSession session, BindingResult result, Model model, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "4") int size,
 			@RequestParam(required = false) String keyword) {
 		model.addAttribute("categories", itemService.getAllCategories());
+		Long userId = (Long) session.getAttribute("userId");
+		User user1 = userServ.findById(userId);
 	    if (result.hasErrors()) {
-	        model.addAttribute("items", itemService.getPagedItems(page, size, keyword));
+	        model.addAttribute("items", itemService.getPagedItems(page, size, keyword, user1));
 	        return "dashboard.jsp"; // Stay on same page to show errors
 	    } else {
 	        itemService.createItem(item);
