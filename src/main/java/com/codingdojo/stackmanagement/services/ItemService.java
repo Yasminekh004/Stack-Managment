@@ -12,6 +12,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.codingdojo.stackmanagement.models.Item;
+import com.codingdojo.stackmanagement.models.User;
 import com.codingdojo.stackmanagement.repositories.ItemRepository;
 
 @Service
@@ -20,17 +21,17 @@ public class ItemService {
 	@Autowired
 	ItemRepository itemRepository;
 	
-	public Page<Item> getPagedItems(int page, int size, String keyword) {
+	public Page<Item> getPagedItems(int page, int size, String keyword, User user) {
         Pageable pageable = PageRequest.of(page, size);
         if (keyword != null && !keyword.isEmpty()) {
             return itemRepository.searchAvailableItems(keyword, pageable);
         }
-        return itemRepository.findAll(pageable);
+        return itemRepository.findByUser(pageable,user);
     }
 	
-	public Page<Item> getPagedItemsbyCategory(int page, int size, String category) {
+	public Page<Item> getPagedItemsbyCategory(int page, int size, String category, User user) {
         Pageable pageable = PageRequest.of(page, size);       
-        return itemRepository.findByCategory(pageable, category);
+        return itemRepository.findByCategoryAndUser(pageable, category, user);
     }
 	
 	
