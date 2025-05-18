@@ -10,19 +10,20 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.codingdojo.stackmanagement.models.Item;
-import com.codingdojo.stackmanagement.models.User;
 
 
 @Repository
 public interface ItemRepository extends JpaRepository<Item, Long> {
 
-	Page<Item> findByUser(Pageable pageable, User user);
+	Page<Item> findByUserId(Pageable pageable, Long userId);
 	
 	@Query(value = "SELECT * FROM items WHERE LOWER(name) LIKE LOWER(CONCAT('%', :keyword, '%'))", countQuery = "SELECT count(*) FROM chores WHERE LOWER(name) LIKE LOWER(CONCAT('%', :keyword, '%'))", nativeQuery = true)
 	Page<Item> searchAvailableItems(@Param("keyword") String keyword, Pageable pageable);
 	
-	Page<Item> findByCategoryAndUser(Pageable pageable, String category, User user);
+	Page<Item> findByCategoryAndUserId(Pageable pageable, String category, Long userId);
 	
 	@Query("SELECT DISTINCT i.category FROM Item i")
 	List<String> findDistinctCategories();
+	
+	List<Item> findByUserId(Long userId);
 }

@@ -1,9 +1,8 @@
 package com.codingdojo.stackmanagement.services;
 
+import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -12,7 +11,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.codingdojo.stackmanagement.models.Item;
-import com.codingdojo.stackmanagement.models.User;
+import com.codingdojo.stackmanagement.models.ItemHistory;
+import com.codingdojo.stackmanagement.repositories.ItemHistoryRepository;
 import com.codingdojo.stackmanagement.repositories.ItemRepository;
 
 @Service
@@ -21,17 +21,20 @@ public class ItemService {
 	@Autowired
 	ItemRepository itemRepository;
 	
-	public Page<Item> getPagedItems(int page, int size, String keyword, User user) {
+	@Autowired
+	ItemHistoryRepository itemHistoryRepository;
+	
+	public Page<Item> getPagedItems(int page, int size, String keyword, Long userId) {
         Pageable pageable = PageRequest.of(page, size);
         if (keyword != null && !keyword.isEmpty()) {
             return itemRepository.searchAvailableItems(keyword, pageable);
         }
-        return itemRepository.findByUser(pageable,user);
+        return itemRepository.findByUserId(pageable,userId);
     }
 	
-	public Page<Item> getPagedItemsbyCategory(int page, int size, String category, User user) {
+	public Page<Item> getPagedItemsbyCategory(int page, int size, String category, Long userId) {
         Pageable pageable = PageRequest.of(page, size);       
-        return itemRepository.findByCategoryAndUser(pageable, category, user);
+        return itemRepository.findByCategoryAndUserId(pageable, category, userId);
     }
 	
 	
@@ -69,16 +72,7 @@ public class ItemService {
 		return itemRepository.findDistinctCategories();
 	}
 	
-	
-	public Map<String, Double> getBudgetPerCategory() {
-	    List<Item> allItems = itemRepository.findAll();
-	    return allItems.stream()
-	        .collect(Collectors.groupingBy(
-	            Item::getCategory,
-	            Collectors.summingDouble(Item::getPrice)
-	        ));
-	}
-	
+
 	public void deleteItem(Long id) {
 		if (itemRepository.existsById(id)) {
 			itemRepository.deleteById(id);
@@ -86,5 +80,18 @@ public class ItemService {
 		} else {
 			System.out.println("No Item with this id to be deleted");
 		}
+	}
+	
+	public void logHistory(Item item, String action) {
+	    ItemHistory history = new ItemHistory();
+	    history.setItemName(item.getName());
+	    history.setPrice(item.getPrice());
+	    history.setStock(item.getStock());
+	    history.setCategory(item.getCategory());
+	    history.setAction(action);
+	    history.setTimestamp(LocalDateTime.now());
+	    history.setUser(item.getUser());
+
+	    itemHistoryRepository.save(history);
 	}
 }

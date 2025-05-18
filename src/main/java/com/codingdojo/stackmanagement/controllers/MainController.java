@@ -6,17 +6,16 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import com.codingdojo.stackmanagement.models.Item;
 import com.codingdojo.stackmanagement.models.LoginUser;
 import com.codingdojo.stackmanagement.models.User;
+import com.codingdojo.stackmanagement.repositories.ItemHistoryRepository;
 import com.codingdojo.stackmanagement.services.ItemService;
 import com.codingdojo.stackmanagement.services.UserService;
 
@@ -36,6 +35,9 @@ public class MainController {
 	
 	@Autowired
     private UserService userServ;
+	
+	@Autowired
+	ItemHistoryRepository itemHistoryRepository;
 
     // === Show login/register page ===
     @GetMapping("/")
@@ -60,7 +62,7 @@ public class MainController {
         }
 
         session.setAttribute("userId", newUser.getId());
-        return "redirect:/dashboard";
+        return "redirect:/items";
     }
 
     // === Login existing user ===
@@ -78,7 +80,7 @@ public class MainController {
         }
 
         session.setAttribute("userId", user.getId());
-        return "redirect:/dashboard";
+        return "redirect:/items";
     }
 
     // === Logout user ===
@@ -105,9 +107,9 @@ public class MainController {
 		Page<Item> items;
 	    
 	    if (category != null && !category.isEmpty()) {
-	    	items = itemService.getPagedItemsbyCategory(page, size, category, user);
+	    	items = itemService.getPagedItemsbyCategory(page, size, category, userId);
 	    } else {
-	    	items = itemService.getPagedItems(page, size, keyword, user);
+	    	items = itemService.getPagedItems(page, size, keyword, userId);
 	    }
 	    
 	    model.addAttribute("items", items.getContent());
@@ -128,12 +130,30 @@ public class MainController {
 			@RequestParam(required = false) String keyword) {
 		model.addAttribute("categories", itemService.getAllCategories());
 		Long userId = (Long) session.getAttribute("userId");
-		User user1 = userServ.findById(userId);
-	    if (result.hasErrors()) {
-	        model.addAttribute("items", itemService.getPagedItems(page, size, keyword, user1));
+
+		if (result.hasErrors()) {
+	        model.addAttribute("items", itemService.getPagedItems(page, size, keyword, userId));
 	        return "dashboard.jsp"; // Stay on same page to show errors
 	    } else {
 	        itemService.createItem(item);
+	        itemService.logHistory(item, "ADDED");
+	        
+	        @SuppressWarnings("unchecked")
+			ArrayList<String> logs = (ArrayList<String>) session.getAttribute("logs");
+	        
+	        if (logs == null) {
+				logs = new ArrayList<>();
+			}
+
+			if (logs.size() > 4) {
+				logs.remove(4);
+			}
+
+			String priceFormatted = String.format("%.2f", item.getPrice());
+			logs.add(0, "Added item: " + item.getName() + " | Price: $" + priceFormatted);
+
+			session.setAttribute("logs", logs);
+			
 	        return "redirect:/dashboard"; // refresh page, form hidden
 	    }
 	}
@@ -176,6 +196,7 @@ public class MainController {
 			return "showItem.jsp";
 		} else {
 			itemService.updateItem(item);
+			itemService.logHistory(item, "EDITED");
 			return "redirect:/items/"+item.getId();
 		}
 	}
@@ -187,9 +208,34 @@ public class MainController {
     	if (userId == null) {
             return "redirect:/";
         }
-    	
-		Map<String, Double> budgetPerCategory = itemService.getBudgetPerCategory();
-		model.addAttribute("budgetPerCategory", budgetPerCategory);
+
+		List<Object[]> budgetData = itemHistoryRepository.sumPriceByCategoryForUser(userId);
+
+        Map<String, Double> budgetMap = new HashMap<>();
+        for (Object[] row : budgetData) {
+            budgetMap.put((String) row[0], (Double) row[1]);
+        }
+
+        model.addAttribute("budgetPerCategory", budgetMap);
+        
+        User user = userServ.findById(userId);
+        
+        double totalSpent = budgetMap.values().stream()
+        	    .mapToDouble(Double::doubleValue)
+        	    .sum();
+        	model.addAttribute("totalSpent", totalSpent);
+        	
+        double userBudget = user.getBudget();
+        model.addAttribute("userBudget", userBudget);
+        
+        
 		return "budgetDetails.jsp";
+	}
+    
+    
+    @DeleteMapping("/item/{id}")
+	public String delete(@PathVariable("id") Long id) {
+    	itemService.deleteItem(id);
+		return "redirect:/items";
 	}
 }
