@@ -1,4 +1,4 @@
-package com.codingdojo.stockmangment.models;
+package com.codingdojo.stackmanagement.models;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;

@@ -1,4 +1,4 @@
-package com.codingdojo.stockmanagment.models;
+package com.codingdojo.stackmanagement.models;
 
 import java.util.Date;
 import java.util.List;
