@@ -46,6 +46,9 @@ public class User {
     
     @OneToMany(mappedBy="user", fetch = FetchType.LAZY)
     private List<Item> item;
+    
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    private List<ItemHistory> itemHistories;
 
     //Budget field
     @Column(nullable = false)
@@ -59,6 +62,21 @@ public class User {
     public void setBudget(Double budget) {
         this.budget = budget;
     }
+   
+    
+	public User() {
+	}
+
+	public User(Long id, String firstName, String lastName, String email, String password,	List<Item> item, List<ItemHistory> itemHistories, Double budget) {
+		this.id = id;
+		this.firstName = firstName;
+		this.lastName = lastName;
+		this.email = email;
+		this.password = password;
+		this.item = item;
+		this.itemHistories = itemHistories;
+		this.budget = budget;
+	}
 
 	public Long getId() {
 		return id;
@@ -116,5 +134,14 @@ public class User {
 		this.item = item;
 	}
 
+	public List<ItemHistory> getItemHistories() {
+		return itemHistories;
+	}
+
+	public void setItemHistories(List<ItemHistory> itemHistories) {
+		this.itemHistories = itemHistories;
+	}
+	
+	
     
 }

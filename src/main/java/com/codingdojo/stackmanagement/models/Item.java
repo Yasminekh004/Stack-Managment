@@ -71,6 +71,19 @@ public class Item {
 	
 	public Item() {
 	}
+	
+	
+
+	public Item(Long id, String name, String category, int stock, double price, LocalDate purchaseDate, LocalDate expiryDate, User user) {
+		this.id = id;
+		this.name = name;
+		this.category = category;
+		this.stock = stock;
+		this.price = price;
+		this.purchaseDate = purchaseDate;
+		this.expiryDate = expiryDate;
+		this.user = user;
+	}
 
 	public Long getId() {
 		return id;
