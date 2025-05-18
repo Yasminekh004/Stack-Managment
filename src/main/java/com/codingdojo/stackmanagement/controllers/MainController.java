@@ -75,10 +75,6 @@ public class MainController {
 	    }
 	}
 
-    
-
-    @Autowired
-    private ItemService itemService;
 
     // === Show login/register page ===
     @GetMapping("/")

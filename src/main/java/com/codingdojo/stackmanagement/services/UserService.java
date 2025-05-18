@@ -7,10 +7,11 @@ import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.BindingResult;
 
+import com.codingdojo.stackmanagement.models.LoginUser;
+import com.codingdojo.stackmanagement.models.User;
+import com.codingdojo.stackmanagement.repositories.UserRepository;
 
-import com.codingdojo.stockmanagement.LoginUser;
-import com.codingdojo.stockmanagement.User;
-import com.codingdojo.stockmanagement.UserRepository;
+
 
 
 @Service
