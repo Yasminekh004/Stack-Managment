@@ -1,4 +1,4 @@
-package com.codingdojo.stockmanagement.controllers;
+package com.codingdojo.stackmanagement.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -6,24 +6,19 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import com.codingdojo.stockmanagement.LoginUser;
-import com.codingdojo.stockmanagement.User;
-import com.codingdojo.stockmanagement.UserService;
-import com.codingdojo.stockmanagement.UserService;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.codingdojo.stackmanagement.models.Item;
+import com.codingdojo.stackmanagement.models.LoginUser;
+import com.codingdojo.stackmanagement.models.User;
 import com.codingdojo.stackmanagement.services.ItemService;
+import com.codingdojo.stackmanagement.services.UserService;
 
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
@@ -36,6 +31,9 @@ public class MainController {
 	
 	@Autowired
 	ItemService itemService;
+	
+	@Autowired
+    private UserService userServ;
 	
 	@GetMapping("/dashboard")
 	public String choresAll(Model model, HttpSession session, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "4") int size,
@@ -77,8 +75,7 @@ public class MainController {
 	    }
 	}
 
-    @Autowired
-    private UserService userServ;
+    
 
     @Autowired
     private ItemService itemService;

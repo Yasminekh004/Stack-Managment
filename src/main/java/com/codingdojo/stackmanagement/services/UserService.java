@@ -1,15 +1,17 @@
-package com.codingdojo.stockmanagement.services;
+package com.codingdojo.stackmanagement.services;
 
 import java.util.Optional;
 
-import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.BindingResult;
+
 
 import com.codingdojo.stockmanagement.LoginUser;
 import com.codingdojo.stockmanagement.User;
 import com.codingdojo.stockmanagement.UserRepository;
+
 
 @Service
 public class UserService {
@@ -22,6 +24,7 @@ public class UserService {
 	// This method will be called from the controller
 	// whenever a user submits a registration form.
 
+	
 	public User register(User newUser, BindingResult result) {
 		// Check if the mail already exist in our DB
 		Optional<User> potentialUser = userRepo.findByEmail(newUser.getEmail());
@@ -77,6 +80,10 @@ public class UserService {
 			return potentialUser.get();
 		}
 		return null;
+	}
+
+	public void save(User user) {
+		userRepo.save(user);		
 	}
 
 }
