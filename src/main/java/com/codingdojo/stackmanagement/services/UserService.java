@@ -7,9 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.BindingResult;
 
-import com.choreTracker.models.LoginUser;
-import com.choreTracker.models.User;
-import com.choreTracker.repositories.UserRepository;
+import com.codingdojo.stockmanagement.LoginUser;
+import com.codingdojo.stockmanagement.User;
+import com.codingdojo.stockmanagement.UserRepository;
 
 @Service
 public class UserService {
