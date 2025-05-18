@@ -77,4 +77,13 @@ public class ItemService {
 	            Collectors.summingDouble(Item::getPrice)
 	        ));
 	}
+	
+	public void deleteItem(Long id) {
+		if (itemRepository.existsById(id)) {
+			itemRepository.deleteById(id);
+			System.out.println("Item has been deleted");
+		} else {
+			System.out.println("No Item with this id to be deleted");
+		}
+	}
 }
