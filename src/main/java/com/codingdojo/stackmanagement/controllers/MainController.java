@@ -6,10 +6,10 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import com.choreTracker.models.LoginUser;
-import com.choreTracker.models.User;
-import com.choreTracker.services.JobService;
-import com.choreTracker.services.UserService;
+import com.codingdojo.stockmanagement.LoginUser;
+import com.codingdojo.stockmanagement.User;
+import com.codingdojo.stockmanagement.UserService;
+import com.codingdojo.stockmanagement.UserService;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -80,8 +80,8 @@ public class MainController {
     @Autowired
     private UserService userServ;
 
-    @Autowired
-    private JobService jobService;
+   // @Autowired
+   // private UserService Service;
 
     // === Show login/register page ===
     @GetMapping("/")
