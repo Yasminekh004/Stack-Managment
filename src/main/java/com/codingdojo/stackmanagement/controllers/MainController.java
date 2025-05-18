@@ -80,8 +80,8 @@ public class MainController {
     @Autowired
     private UserService userServ;
 
-   // @Autowired
-   // private UserService Service;
+    @Autowired
+    private ItemService itemService;
 
     // === Show login/register page ===
     @GetMapping("/")
