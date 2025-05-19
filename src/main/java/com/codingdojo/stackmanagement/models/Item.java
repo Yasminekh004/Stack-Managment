@@ -1,6 +1,5 @@
 package com.codingdojo.stackmanagement.models;
 
-import java.time.LocalDate;
 import java.util.Date;
 
 import org.springframework.format.annotation.DateTimeFormat;
@@ -16,7 +15,9 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
@@ -28,11 +29,11 @@ public class Item {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
-	@NotNull(message = "Item name is required!")
+	@NotBlank(message = "Item name is required!")
 	@Size(min = 3, max = 200, message = "Item name must be at least 3 characters.")
 	private String name;
 	
-	@NotNull(message = "Category is required!")
+	@NotBlank(message = "Category is required!")
 	@Size(min = 3, max = 200, message = "Category must be at least 3 characters.")
 	private String category;
 	
@@ -40,8 +41,8 @@ public class Item {
 	@Min(value = 1, message = "Must be at least 1.")
 	private int stock;
 	
-	@NotNull(message = "Stock is required!")
-	@Min(value = 1, message = "Must be at least 1.0.")
+	@NotNull(message = "price is required!")
+	@DecimalMin(value = "0.0", inclusive = false, message = "Price must be positive")
 	private double price;
 	
 	@DateTimeFormat(pattern = "yyyy-MM-dd")
