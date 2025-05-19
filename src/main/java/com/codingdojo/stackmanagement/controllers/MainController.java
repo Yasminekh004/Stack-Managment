@@ -129,13 +129,13 @@ public class MainController {
 	
 	// === Add new item and log it in logs + added in table item history (for charts) ===
 	@PostMapping("/item/new")
-	public String create(@Valid @ModelAttribute("item") Item item, HttpSession session, BindingResult result, Model model, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "4") int size,
+	public String create(@Valid @ModelAttribute("item") Item item, BindingResult result, HttpSession session, Model model, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "4") int size,
 			@RequestParam(required = false) String keyword) {
 		model.addAttribute("categories", itemService.getAllCategories());
 		Long userId = (Long) session.getAttribute("userId");
 
 		if (result.hasErrors()) {
-	        model.addAttribute("items", itemService.getPagedItems(page, size, keyword, userId));
+	        model.addAttribute("items", itemService.getPagedItems(page, size, keyword, userId).getContent());
 	        return "dashboard.jsp";
 	    } else {
 	    	item.setUser(userServ.findById(userId));
@@ -195,8 +195,7 @@ public class MainController {
     // === Edit item + added in table item history (for charts) ===
     
     @PutMapping("/item/{id}/edit")
-	public String update(@Valid @ModelAttribute("item") Item item, BindingResult result,
-			Model model) {
+	public String update(@Valid @ModelAttribute("item") Item item, BindingResult result, Model model) {
 		
 		if (result.hasErrors()) {
 			model.addAttribute("item", item);
@@ -247,7 +246,6 @@ public class MainController {
     
     @DeleteMapping("/item/{id}")
 	public String delete(@PathVariable("id") Long id) {
-    	
     	itemService.logHistory(itemService.findItem(id), "DELETED");
     	itemService.deleteItem(id);
 		return "redirect:/items";
