@@ -9,7 +9,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Item Details - Stack Management</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/styles.css">
 </head>
 <body class="bg-light min-h-screen">
     <jsp:include page="components/nvbar.jsp" />
@@ -38,11 +38,23 @@
                     </div>
                     <div class="mb-3">
                         <form:label path="category" class="form-label">Category:</form:label>
-                        <form:select path="category" class="form-select">
-                            <c:forEach items="${categories}" var="cat">
-                                <option value="${cat}" ${item.category == cat ? 'selected' : ''}>${cat}</option>
-                            </c:forEach>
-                        </form:select>
+                        <select id="categorySelect" class="form-select" onchange="toggleCustomCategory(this.value)">
+						        <option value="">Select a category</option>
+						        <c:forEach var="cat" items="${categories}">
+						            <option value="${cat}" ${cat == item.category ? 'selected' : ''}>${cat}</option>
+						        </c:forEach>
+						        <option value="Other" ${!categories.contains(item.category) ? 'selected' : ''}>Other</option>
+						    </select>
+						
+						    <!-- Custom category input -->
+						    <input type="text" id="customCategory" class="form-control mt-2"
+						           style="display: none;" placeholder="Enter new category"
+						           value="${!categories.contains(item.category) ? item.category : ''}" />
+						
+						    <!-- Real form binding -->
+						    <form:input path="category" id="finalCategory" type="hidden"/>
+						
+						    <form:errors path="category" cssClass="text-danger small"/>
                         <form:errors path="category" cssClass="text-danger small"/>
                     </div>
                     <div class="mb-3">

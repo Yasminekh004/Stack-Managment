@@ -103,3 +103,31 @@ document.addEventListener('DOMContentLoaded', () => {
         initBudgetCharts('budgetPieChart', 'expensesBarChart', categories, amounts, totalSpent);
     }
 });
+
+
+
+function toggleCustomCategory(value) {
+        const customInput = document.getElementById("customCategory");
+        const finalInput = document.getElementById("finalCategory");
+
+        if (value === "Other") {
+            customInput.style.display = "block";
+            customInput.required = true;
+            finalInput.value = customInput.value; // Initially blank or existing
+
+            // Update final value as user types
+            customInput.addEventListener("input", function () {
+                finalInput.value = customInput.value;
+            });
+        } else {
+            customInput.style.display = "none";
+            customInput.required = false;
+            finalInput.value = value;
+        }
+    }
+
+    // On page load: set correct value
+    document.addEventListener("DOMContentLoaded", function () {
+        const selectedValue = document.getElementById("categorySelect").value;
+        toggleCustomCategory(selectedValue);
+    });
