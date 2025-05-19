@@ -2,40 +2,46 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
 
 body {
-    font-family: 'Roboto', sans-serif;
+    font-family: Arial, sans-serif;
+    margin: 20px;
     background-color: #f4f6f9;
 }
 
 .navbar {
-    background-color: #0052cc;
-    padding: 1rem 2rem;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    display: flex;
+    justify-content: space-between;
+    padding: 10px;
+    background-color: #f8f8f8;
+    border-bottom: 1px solid #ddd;
 }
 
-.navbar-brand, .nav-link {
-    color: #ffffff !important;
-    font-weight: 500;
-}
-
-.navbar-brand:hover, .nav-link:hover {
-    color: #e6f0ff !important;
+.navbar a {
+    margin: 0 10px;
+    text-decoration: none;
+    color: #007bff;
 }
 
 .navbar-right button {
-    border: 1px solid #ffffff;
-    color: #ffffff;
-    padding: 0.5rem 1rem;
-    border-radius: 5px;
-    background-color: transparent;
-    transition: background-color 0.3s;
+    margin: 0 5px;
+    padding: 5px 10px;
+    background-color: #333;
+    color: white;
+    border: none;
+    cursor: pointer;
 }
 
 .navbar-right button:hover {
-    background-color: rgba(255, 255, 255, 0.2);
+    background-color: #555;
 }
 
 .footer {
-    border-top: 1px solid #e9ecef;
+    text-align: center;
+    padding: 10px;
+    background-color: #f8f8f8;
+    border-top: 1px solid #ddd;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
 }
 
 .card {
@@ -56,8 +62,10 @@ body {
 }
 
 .alert {
+    background-color: #ffcccc;
+    padding: 10px;
+    margin: 10px 0;
     border-radius: 5px;
-    margin-bottom: 1.5rem;
 }
 
 .table {

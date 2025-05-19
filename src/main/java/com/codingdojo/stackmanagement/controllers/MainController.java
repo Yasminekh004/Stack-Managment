@@ -90,6 +90,7 @@ public class MainController {
         return "redirect:/";
     }
  	
+    // === View All items for User  with search and category filter ===
 	@GetMapping("/items")
 	public String itemAll(Model model, HttpSession session, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "4") int size,
 			@RequestParam(required = false) String keyword, @RequestParam(required = false) String category) {
@@ -125,6 +126,8 @@ public class MainController {
 		return "dashboard.jsp";
 	}
 	
+	
+	// === Add new item and log it in logs + added in table item history (for charts) ===
 	@PostMapping("/item/new")
 	public String create(@Valid @ModelAttribute("item") Item item, HttpSession session, BindingResult result, Model model, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "4") int size,
 			@RequestParam(required = false) String keyword) {
@@ -176,6 +179,7 @@ public class MainController {
         return "redirect:/items";
     }
     
+    // === View item details ===
     @GetMapping("/items/{id}")
 	public String show(@PathVariable Long id, Model model, HttpSession session) {
     	Long userId = (Long) session.getAttribute("userId");
@@ -187,6 +191,8 @@ public class MainController {
 		model.addAttribute("item", item);
 		return "showItem.jsp";
 	}
+    
+    // === Edit item + added in table item history (for charts) ===
     
     @PutMapping("/item/{id}/edit")
 	public String update(@Valid @ModelAttribute("item") Item item, BindingResult result,
@@ -201,6 +207,10 @@ public class MainController {
 			return "redirect:/items/"+item.getId();
 		}
 	}
+    
+    // === Dashboard for the charts  ===
+    // budgetPerCategory for the budget of each category
+    // userBudget for user expenses and savings ( How much they spent in total )
     
     @GetMapping("/dashboard")
 	public String budgetDetails(Model model, HttpSession session) {
@@ -233,9 +243,12 @@ public class MainController {
 		return "budgetDetails.jsp";
 	}
     
+    // === Delete Item  ===
     
     @DeleteMapping("/item/{id}")
 	public String delete(@PathVariable("id") Long id) {
+    	
+    	itemService.logHistory(itemService.findItem(id), "DELETED");
     	itemService.deleteItem(id);
 		return "redirect:/items";
 	}
