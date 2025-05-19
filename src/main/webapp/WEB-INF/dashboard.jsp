@@ -7,7 +7,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Stack Management Dashboard</title>
+    <title>Stock Management Dashboard</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="/css/style.css">
 </head>
@@ -83,11 +83,13 @@
                                 <a class="page-link" href="/items?page=${currentPage - 1}&size=${size}&keyword=${keyword}&category=${selectedCategory}">Previous</a>
                             </li>
                         </c:if>
-                        <c:forEach begin="0" end="${totalPages - 1}" var="i">
-                            <li class="page-item ${i == currentPage ? 'active' : ''}">
-                                <a class="page-link" href="/items?page=${i}&size=${size}&keyword=${keyword}&category=${selectedCategory}">${i + 1}</a>
-                            </li>
-                        </c:forEach>
+                        <c:if test="${totalPages > 0}">
+	                        <c:forEach begin="0" end="${totalPages - 1}" var="i">
+	                            <li class="page-item ${i == currentPage ? 'active' : ''}">
+	                                <a class="page-link" href="/items?page=${i}&size=${size}&keyword=${keyword}&category=${selectedCategory}">${i + 1}</a>
+	                            </li>
+	                        </c:forEach>
+                        </c:if>
                         <c:if test="${currentPage < totalPages - 1}">
                             <li class="page-item">
                                 <a class="page-link" href="/items?page=${currentPage + 1}&size=${size}&keyword=${keyword}&category=${selectedCategory}">Next</a>

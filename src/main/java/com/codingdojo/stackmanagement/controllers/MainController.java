@@ -133,8 +133,9 @@ public class MainController {
 
 		if (result.hasErrors()) {
 	        model.addAttribute("items", itemService.getPagedItems(page, size, keyword, userId));
-	        return "dashboard.jsp"; // Stay on same page to show errors
+	        return "dashboard.jsp";
 	    } else {
+	    	item.setUser(userServ.findById(userId));
 	        itemService.createItem(item);
 	        itemService.logHistory(item, "ADDED");
 	        
@@ -154,7 +155,7 @@ public class MainController {
 
 			session.setAttribute("logs", logs);
 			
-	        return "redirect:/dashboard"; // refresh page, form hidden
+	        return "redirect:/items";
 	    }
 	}
 

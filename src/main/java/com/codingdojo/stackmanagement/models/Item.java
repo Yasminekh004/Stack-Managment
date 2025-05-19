@@ -44,9 +44,11 @@ public class Item {
 	@Min(value = 1, message = "Must be at least 1.0.")
 	private double price;
 	
-	private LocalDate purchaseDate;
+	@DateTimeFormat(pattern = "yyyy-MM-dd")
+	private Date purchaseDate;
 
-    private LocalDate expiryDate;
+	@DateTimeFormat(pattern = "yyyy-MM-dd")
+    private Date expiryDate;
     
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="user_id")
@@ -74,7 +76,7 @@ public class Item {
 	
 	
 
-	public Item(Long id, String name, String category, int stock, double price, LocalDate purchaseDate, LocalDate expiryDate, User user) {
+	public Item(Long id, String name, String category, int stock, double price, Date purchaseDate, Date expiryDate, User user) {
 		this.id = id;
 		this.name = name;
 		this.category = category;
@@ -141,19 +143,19 @@ public class Item {
 		this.price = price;
 	}
 
-	public LocalDate getPurchaseDate() {
+	public Date getPurchaseDate() {
 		return purchaseDate;
 	}
 
-	public void setPurchaseDate(LocalDate purchaseDate) {
+	public void setPurchaseDate(Date purchaseDate) {
 		this.purchaseDate = purchaseDate;
 	}
 
-	public LocalDate getExpiryDate() {
+	public Date getExpiryDate() {
 		return expiryDate;
 	}
 
-	public void setExpiryDate(LocalDate expiryDate) {
+	public void setExpiryDate(Date expiryDate) {
 		this.expiryDate = expiryDate;
 	}
 
