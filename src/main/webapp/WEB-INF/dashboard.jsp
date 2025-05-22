@@ -13,6 +13,109 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="/css/styles.css">
 </head>
+<!-- ✅ Chatbot Styles -->
+<style>
+    #chatbot-toggle {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background: #0d6efd;
+        color: white;
+        border-radius: 50%;
+        width: 60px;
+        height: 60px;
+        font-size: 30px;
+        border: none;
+        z-index: 1000;
+    }
+
+    #chatbot-window {
+        position: fixed;
+        bottom: 90px;
+        right: 20px;
+        width: 300px;
+        height: 400px;
+        background: white;
+        border: 1px solid #ccc;
+        display: none;
+        flex-direction: column;
+        box-shadow: 0 0 10px rgba(0,0,0,0.2);
+        z-index: 1000;
+    }
+
+    #chatbot-messages {
+        flex: 1;
+        padding: 10px;
+        overflow-y: auto;
+        font-size: 14px;
+    }
+
+    #chatbot-input {
+        display: flex;
+        border-top: 1px solid #ccc;
+    }
+
+    #chatbot-input input {
+        flex: 1;
+        padding: 10px;
+        border: none;
+        outline: none;
+    }
+
+    #chatbot-input button {
+        padding: 10px;
+        border: none;
+        background: #0d6efd;
+        color: white;
+    }
+</style>
+
+<!-- ✅ Chatbot HTML -->
+<button id="chatbot-toggle" title="Chatbot">💬</button>
+
+<div id="chatbot-window">
+    <div id="chatbot-messages"></div>
+    <div id="chatbot-input">
+        <input type="text" id="user-input" placeholder="Ask something..." 
+            onkeydown="if(event.key === 'Enter') { event.preventDefault(); sendMessage(); }">
+        <button type="button" onclick="sendMessage()">Send</button>
+    </div>
+</div>
+
+<!-- ✅ Chatbot Script -->
+<script>
+    const chatbotToggle = document.getElementById('chatbot-toggle');
+    const chatbotWindow = document.getElementById('chatbot-window');
+    const chatbotMessages = document.getElementById('chatbot-messages');
+
+    chatbotToggle.addEventListener('click', () => {
+        chatbotWindow.style.display = chatbotWindow.style.display === 'none' ? 'flex' : 'none';
+    });
+
+    function sendMessage() {
+        const input = document.getElementById('user-input');
+        const message = input.value.trim();
+        if (message === '') return;
+
+        chatbotMessages.innerHTML += `<div><strong>You:</strong> ${message}</div>`;
+
+        fetch('/chat', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ message: message })
+        })
+        .then(response => response.text())
+        .then(reply => {
+            chatbotMessages.innerHTML += `<div><strong>Bot:</strong> ${reply}</div>`;
+            chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
+        })
+        .catch(err => {
+            chatbotMessages.innerHTML += `<div class="text-danger"><strong>Bot:</strong> Error responding.</div>`;
+        });
+
+        input.value = '';
+    }
+</script>
 <body class="bg-light min-h-screen">
     <jsp:include page="components/nvbar.jsp" />
     <div class="container mt-5">
