@@ -39,9 +39,7 @@ public class User {
     @Size(min = 8, max = 128, message = "Password must be between 8 and 128 characters")
     private String password;
 
-    @Transient // This avoids saving confirm to the DB
-    @NotEmpty(message = "Confirm Password is required!")
-    @Size(min = 8, max = 128, message = "Confirm Password must be between 8 and 128 characters")
+    @Transient // Changed this to avoid Budget update error
     private String confirm;
     
     @OneToMany(mappedBy="user", fetch = FetchType.LAZY)
