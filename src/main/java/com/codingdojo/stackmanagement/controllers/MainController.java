@@ -5,6 +5,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -163,21 +164,27 @@ public class MainController {
 	}
 
     // === Update Budget ===
-    @PostMapping("/update-budget")
-    public String updateBudget(@RequestParam("budget") Double newBudget, HttpSession session) {
-        Long userId = (Long) session.getAttribute("userId");
-        if (userId == null) {
-            return "redirect:/";
-        }
+	@PostMapping("/update-budget")
+	public String updateBudget(@RequestParam("budget") Double newBudget, HttpSession session, RedirectAttributes redirectAttributes) {
+	    Long userId = (Long) session.getAttribute("userId");
+	    
+	    if (userId == null) {
+	        redirectAttributes.addFlashAttribute("error", "You must be logged in to update budget.");
+	        return "redirect:/dashboard";
+	    }
 
-        User user = userServ.findById(userId);
-        if (user != null) {
-            user.setBudget(newBudget);
-            userServ.save(user);
-        }
+	    User user = userServ.findById(userId);
+	    if (user == null) {
+	        redirectAttributes.addFlashAttribute("error", "User not found.");
+	        return "redirect:/dashboard";
+	    }
 
-        return "redirect:/items";
-    }
+	    user.setBudget(newBudget);
+	    userServ.save(user);
+
+	    redirectAttributes.addFlashAttribute("success", "Budget updated successfully.");
+	    return "redirect:/dashboard"; // or /dash, depending on what you want
+	}
     
     // === View item details ===
     @GetMapping("/items/{id}")
